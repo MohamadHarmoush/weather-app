@@ -27,14 +27,28 @@ async function fetchCurrentWeather(params) {
         current: ['relative_humidity_2m', 'wind_speed_10m', 'temperature_2m'],
     });
     const apiUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
-    //console.log('apiUrl', apiUrl);
+    console.log('apiUrl', apiUrl);
     
     const response = await fetch(apiUrl);
     if (!response.ok) throw new Error(`Weather API error: ${response.status}`);
 
     const data = await response.json();
-    //console.log(data)
+    return data
+}
 
+async function fetchForecast(params) {
+    const apiUrl = new URL('https://api.open-meteo.com/v1/forecast?')
+    apiUrl.searchParams.set('latitude', params.latitude)
+    apiUrl.searchParams.set('longitude', params.longitude)
+    apiUrl.searchParams.set('temperature_unit', params.celsius ? 'celsius' : 'fahrenheit')
+    apiUrl.searchParams.set('forecast_days', params.forecast)
+    apiUrl.searchParams.set('daily', ['temperature_2m_max','temperature_2m_min','wind_speed_10m_max'])
+    
+    const response = await fetch(apiUrl)
+    console.log(apiUrl.toString());
+    if (!response.ok) throw new Error(`Weather API error: ${response.status}`)
+
+    const data = await response.json()
     return data
 }
 
@@ -89,48 +103,64 @@ function extractCommand(rawArgs) {
 }
 
 function displayCurrentWeather(data) {
-    console.log(`current Date: ${formatWeatherTime(data)}`);
+    console.log('------------------------------------------------------------')
+    console.log(`current Date: ${formatWeatherTime(data.current.time, data.timezone)}`);
     console.log(`current temperature: ${data.current.temperature_2m} ${data.current_units.temperature_2m}`);
     console.log(`current humidity: ${data.current.relative_humidity_2m} ${data.current_units.relative_humidity_2m}`);
     console.log(`current wind speed: ${data.current.wind_speed_10m} ${data.current_units.wind_speed_10m}`);
+    console.log('------------------------------------------------------------')
 }
 
-function formatWeatherTime(data) {
-    const isGMT = data.timezone === 'GMT';
-    const currentDate = new Date(data.current.time + (isGMT ? 'Z' : ''));
-    return currentDate.toLocaleDateString('en-US',  {
-        month: 'long',
-        weekday: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: "2-digit",
-        second: '2-digit',
-    });
+function displayForecastData(data, count) {
+    // console.log(data)
+    console.log('------------------------------------------------------------')
+    const daily = data.daily
+    const timezone = data.timezone
+    const dailyUnits = data.daily_units
+    for (let index = 0; index < count ; index++) {
+        console.log(`Weather in: ${formatWeatherTime(daily.time[index], timezone, false)}`);
+        const minTemperature = `${daily.temperature_2m_min[index]} ${dailyUnits.temperature_2m_min[index]}`
+        const maxTemperature = `${daily.temperature_2m_max[index]} ${dailyUnits.temperature_2m_max[index]}`
+        console.log(`current temperature min: ${minTemperature}, max: ${maxTemperature}`);
+        console.log(`current wind speed: ${daily.wind_speed_10m_max[index]} ${dailyUnits.wind_speed_10m_max[index]}`);
+        console.log('------------------------------------------------------------')
+    }
+   
 }
 
-function main() {
+function formatWeatherTime(time, timezone, showHours = true) {
+    const isGMT = timezone === 'GMT';
+    const currentDate = new Date(time + (isGMT ? 'Z' : ''));
+    let options;
+    if (showHours) {
+        options = { month: 'long', weekday: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: "2-digit" }
+    } else {
+        options = { month: 'long', weekday: 'long', day: 'numeric', year: 'numeric'}
+    }
+    return currentDate.toLocaleDateString('en-US', options);
+}
+
+async function main() {
     const rawArgs = process.argv.slice(2);
     const cmd = extractCommand(rawArgs);
     // console.log('rawArgs:', rawArgs);
     console.log('command', cmd);
     
-    findCityLocation(cmd.city)
-    .then(data => {
-        return fetchCurrentWeather(
-            params = {
-                celsius: cmd.options.celsius,
-                forecast: cmd.options.forecast,
-                latitude: data.latitude,
-                longitude: data.longitude,
-            }
-        )
-    })
-    .then(data => {
-        console.log('------------------------------------------------------------')
-        displayCurrentWeather(data)
-        console.log('------------------------------------------------------------')
-    });
+    const cityLocation = await findCityLocation(cmd.city)
+    const forecastDays = cmd.options.forecast
+    const weatherParams = {
+        celsius: cmd.options.celsius,
+        forecast: forecastDays,
+        latitude: cityLocation.latitude,
+        longitude: cityLocation.longitude,
+    }
+    if (forecastDays > 1) {
+        const forecastData = await fetchForecast(weatherParams)
+        displayForecastData(forecastData, forecastDays)
+    } else {
+        const currentWeatherData = await fetchCurrentWeather(weatherParams)
+        displayCurrentWeather(currentWeatherData)
+    }
 }
 
 main();
