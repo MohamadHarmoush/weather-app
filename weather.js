@@ -3,7 +3,7 @@ async function findCityLocation(name) {
     return fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        console.log(data)
+        // console.log(data)
         if (data.results === undefined || data.results.length == 0) throw Error('Error no results found!');
         const city = data.results[0];
         const location = {
@@ -27,14 +27,14 @@ async function fetchCurrentWeather(params) {
         current: ['relative_humidity_2m', 'wind_speed_10m', 'temperature_2m'],
     });
     const apiUrl = `https://api.open-meteo.com/v1/forecast?${queryParams}`;
-    console.log('apiUrl', apiUrl);
+    //console.log('apiUrl', apiUrl);
     
     const response = await fetch(apiUrl);
     if (!response.ok) throw new Error(`Weather API error: ${response.status}`);
 
     const data = await response.json();
-    console.log(data)
-    
+    //console.log(data)
+
     return data
 }
 
@@ -78,33 +78,58 @@ function extractCommand(rawArgs) {
         index++;
     }
 
-    if(!command.city) {
+    if (!command.city) {
         throw new Error('Please provide a city name')
+    }
+    if (command.options.forecast === null) {
+        command.options.forecast = 1
     }
 
     return command;
 }
 
+function displayCurrentWeather(data) {
+    console.log(`current Date: ${formatWeatherTime(data)}`);
+    console.log(`current temperature: ${data.current.temperature_2m} ${data.current_units.temperature_2m}`);
+    console.log(`current humidity: ${data.current.relative_humidity_2m} ${data.current_units.relative_humidity_2m}`);
+    console.log(`current wind speed: ${data.current.wind_speed_10m} ${data.current_units.wind_speed_10m}`);
+}
+
+function formatWeatherTime(data) {
+    const isGMT = data.timezone === 'GMT';
+    const currentDate = new Date(data.current.time + (isGMT ? 'Z' : ''));
+    return currentDate.toLocaleDateString('en-US',  {
+        month: 'long',
+        weekday: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: "2-digit",
+        second: '2-digit',
+    });
+}
+
 function main() {
     const rawArgs = process.argv.slice(2);
     const cmd = extractCommand(rawArgs);
-    console.log('rawArgs:', rawArgs);
+    // console.log('rawArgs:', rawArgs);
     console.log('command', cmd);
     
     findCityLocation(cmd.city)
-    .then(resolve => {
+    .then(data => {
         return fetchCurrentWeather(
             params = {
                 celsius: cmd.options.celsius,
                 forecast: cmd.options.forecast,
-                latitude: resolve.latitude,
-                longitude: resolve.longitude,
+                latitude: data.latitude,
+                longitude: data.longitude,
             }
         )
     })
-    .then(resolve => {
-        console.log('--------------------')
-        console.log(resolve)
+    .then(data => {
+        console.log('------------------------------------------------------------')
+        displayCurrentWeather(data)
+        console.log('------------------------------------------------------------')
     });
 }
 
