@@ -1,5 +1,30 @@
 const { createForecastFromAPI, createWeatherFromAPI, createCity } = require('./models');
 const { displayCurrentWeather, displayForecasts } = require('./display');
+const fs = require('fs');
+const path = require('path');
+const FAVORITES_FILE = path.join(__dirname, 'favorites.json');
+
+function loadFavorites() {
+    if (!fs.existsSync(FAVORITES_FILE)) return [];
+    try {
+        return JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'));
+    } catch {
+        return [];
+    }
+}
+function addFavorite(city) {
+    const favorites = loadFavorites();
+    const index = favorites.findIndex((fav) => fav.name.toLowerCase() === city.name.toLowerCase());
+
+    if (index >= 0) favorites[index] = city;
+    else favorites.push(city);
+
+    saveFavorites(favorites);
+}
+
+function saveFavorites(favorites) {
+    fs.writeFileSync(FAVORITES_FILE, JSON.stringify(favorites, null, 2));
+}
 
 async function findCityLocation(name) {
     const apiUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${name}&count=1&format=json`;
@@ -56,7 +81,6 @@ async function fetchForecast(params) {
     if (!response.ok) throw new Error(`Weather API error: ${response.status}`);
 
     const data = await response.json();
-    // displayForecastData(data, params.forecast);
     const forecasts = [];
     const isGMT = data.timezone === 'GMT';
     for (let index = 0; index < params.forecast; index++) {
@@ -99,6 +123,10 @@ function extractCommand(rawArgs) {
             case '--favorites':
                 command.options.favorites = true;
                 break;
+            case '--save':
+            case '-s':
+                command.options.save = true;
+                break;
             default:
                 if (arg.startsWith('--')) throw new Error(`Unknown flag: ${arg}`);
                 command.city = arg.toLowerCase();
@@ -133,6 +161,16 @@ async function main() {
     let forecasts = [];
     let currentWeatherData = null;
 
+    if (cmd.options.favorites) {
+        const favorites = loadFavorites();
+        console.log('--------------------------------------------------------------');
+        console.log('---------------------favorites--------------------------------');
+        console.log('--------------------------------------------------------------');
+        console.dir(favorites, { depth: null, colors: true });
+        console.log('--------------------------------------------------------------');
+        return;
+    }
+
     if (forecastDays > 1) {
         forecasts = await fetchForecast(weatherParams);
         displayForecasts(forecasts);
@@ -140,8 +178,11 @@ async function main() {
         currentWeatherData = await fetchCurrentWeather(weatherParams);
         displayCurrentWeather(currentWeatherData);
     }
-    console.log();
+
     const city = createCity(cmd.city, location, currentWeatherData, forecasts);
+    if (cmd.options.save) addFavorite(city);
+
+    console.log();
     console.log('---------------------Start-CityInformation--------------------------------');
     console.dir(city, { depth: null, colors: true });
     console.log('---------------------End-CityInformation----------------------------------');
