@@ -134,7 +134,7 @@ function extractCommand(rawArgs) {
         index++;
     }
 
-    if (!command.city) {
+    if (!command.city && !command.options.favorites) {
         throw new Error('Please provide a city name');
     }
     if (command.options.forecast === null) {

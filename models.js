@@ -1,9 +1,4 @@
-function createTemperature(value, unit) {
-    return {
-        value: value,
-        unit: unit,
-    };
-}
+const createTemperature = (value, unit) => ({ value, unit });
 
 function createForecast(time, minTemperature, maxTemperature, windSpeed) {
     return {

@@ -30,8 +30,7 @@ function displayForecasts(forecasts) {
     // console.log(forecasts);
     console.log('-----------------------***-------------------------------------');
 
-    for (let index = 0; index < forecasts.length; index++) {
-        const forecast = forecasts[index];
+    for (const forecast of forecasts) {
         console.log(`Weather in: ${formatWeatherTime(forecast.time, false)}`);
 
         const minTemperature = `${forecast.minTemperature.value} ${forecast.minTemperature.unit}`;
@@ -45,21 +44,13 @@ function displayForecasts(forecasts) {
 function formatWeatherTime(time, timezone, showHours = true) {
     const isGMT = timezone === 'GMT';
     const currentDate = new Date(time + (isGMT ? 'Z' : ''));
-    const options = showHours
-        ? {
-              month: 'long',
-              weekday: 'long',
-              day: 'numeric',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-          }
-        : {
-              month: 'long',
-              weekday: 'long',
-              day: 'numeric',
-              year: 'numeric',
-          };
+    const options = {
+        month: 'long',
+        weekday: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        ...(showHours ? { hour: '2-digit', minute: '2-digit' } : {}),
+    };
     return currentDate.toLocaleDateString('en-US', options);
 }
 
