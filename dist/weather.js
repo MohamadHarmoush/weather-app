@@ -1,37 +1,37 @@
-import type { Command, City } from './models.js';
-import fs from 'fs';
-import path from 'path';
-import { displayCurrentWeather, displayForecasts } from './display.js';
-import { findCityLocation, fetchWeather } from './api.js';
-
-const FAVORITES_FILE = path.join(__dirname, 'favorites.json');
-
-function loadFavorites(): City[] {
-    if (!fs.existsSync(FAVORITES_FILE)) return [];
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const display_js_1 = require("./display.js");
+const api_js_1 = require("./api.js");
+const FAVORITES_FILE = path_1.default.join(__dirname, 'favorites.json');
+function loadFavorites() {
+    if (!fs_1.default.existsSync(FAVORITES_FILE))
+        return [];
     try {
-        return JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'));
-    } catch {
+        return JSON.parse(fs_1.default.readFileSync(FAVORITES_FILE, 'utf-8'));
+    }
+    catch {
         return [];
     }
 }
-function addFavorite(city: City) {
+function addFavorite(city) {
     const favorites = loadFavorites();
-    const index = favorites.findIndex(
-        (fav: City) => fav.name.toLowerCase() === city.name.toLowerCase()
-    );
-
-    if (index >= 0) favorites[index] = city;
-    else favorites.push(city);
-
+    const index = favorites.findIndex((fav) => fav.name.toLowerCase() === city.name.toLowerCase());
+    if (index >= 0)
+        favorites[index] = city;
+    else
+        favorites.push(city);
     saveFavorites(favorites);
 }
-
-function saveFavorites(favorites: City[]) {
-    fs.writeFileSync(FAVORITES_FILE, JSON.stringify(favorites, null, 2));
+function saveFavorites(favorites) {
+    fs_1.default.writeFileSync(FAVORITES_FILE, JSON.stringify(favorites, null, 2));
 }
-
-function extractCommand(rawArgs: string[]): Command {
-    const command: Command = {
+function extractCommand(rawArgs) {
+    const command = {
         cityName: null,
         options: {
             forecast: 1,
@@ -74,24 +74,21 @@ function extractCommand(rawArgs: string[]): Command {
                 command.options.save = true;
                 break;
             default:
-                if (arg!.startsWith('--')) throw new Error(`Unknown flag: ${arg}`);
-                command.cityName = arg!.toLowerCase();
+                if (arg.startsWith('--'))
+                    throw new Error(`Unknown flag: ${arg}`);
+                command.cityName = arg.toLowerCase();
         }
         index++;
     }
-
     if (!command.cityName && !command.options.favorites) {
         throw new Error('Please provide a city name');
     }
-
     return command;
 }
-
 async function main() {
     const rawArgs = process.argv.slice(2);
     const cmd = extractCommand(rawArgs);
     console.log('command', cmd);
-
     if (cmd.options.favorites) {
         const favorites = loadFavorites();
         console.log('--------------------------------------------------------------');
@@ -101,28 +98,25 @@ async function main() {
         console.log('--------------------------------------------------------------');
         return;
     }
-
-    const location = await findCityLocation(cmd.cityName!);
-    const weatherData = await fetchWeather(location, cmd.options.forecast, cmd.options.celsius);
-
+    const location = await (0, api_js_1.findCityLocation)(cmd.cityName);
+    const weatherData = await (0, api_js_1.fetchWeather)(location, cmd.options.forecast, cmd.options.celsius);
     if (weatherData.forecasts.length > 0) {
-        displayForecasts(weatherData.forecasts);
+        (0, display_js_1.displayForecasts)(weatherData.forecasts);
     }
     if (weatherData.current) {
-        displayCurrentWeather(weatherData.current);
+        (0, display_js_1.displayCurrentWeather)(weatherData.current);
     }
-
-    const city: City = {
+    const city = {
         name: cmd.cityName ?? '',
         location: location,
         weatherData: weatherData,
     };
-    if (cmd.options.save) addFavorite(city);
-
+    if (cmd.options.save)
+        addFavorite(city);
     console.log();
     console.log('---------------------Start-CityInformation--------------------------------');
     console.dir(city, { depth: null, colors: true });
     console.log('---------------------End-CityInformation----------------------------------');
 }
-
 main();
+//# sourceMappingURL=weather.js.map
