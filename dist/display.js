@@ -6,6 +6,7 @@ exports.formatWeatherTime = formatWeatherTime;
 function displayCurrentWeather(data) {
     console.log('-------------------------***-----------------------------------');
     console.log(`current Date: ${formatWeatherTime(data.time)}`);
+    console.log(`${data.icon} ${data.condition}`);
     console.log(`current temperature: ${data.temperature.value} ${data.temperature.unit}`);
     console.log(`current humidity: ${data.humidity}`);
     console.log(`current wind speed: ${data.windSpeed}`);
@@ -15,6 +16,7 @@ function displayForecasts(forecasts) {
     console.log('-----------------------***-------------------------------------');
     for (const forecast of forecasts) {
         console.log(`Weather in: ${formatWeatherTime(forecast.time, false)}`);
+        console.log(`${forecast.icon} ${forecast.condition}`);
         const minTemperature = `${forecast.minTemperature.value} ${forecast.minTemperature.unit}`;
         const maxTemperature = `${forecast.maxTemperature.value} ${forecast.maxTemperature.unit}`;
         console.log(`temperature min: ${minTemperature}, max: ${maxTemperature}`);

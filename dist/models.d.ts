@@ -7,12 +7,16 @@ export interface Forecast {
     minTemperature: Temperature;
     maxTemperature: Temperature;
     windSpeed: string;
+    condition: string;
+    icon: string;
 }
 export interface Weather {
     time: string;
     temperature: Temperature;
     humidity: string;
     windSpeed: string;
+    condition: string;
+    icon: string;
 }
 export interface Location {
     latitude: number;
