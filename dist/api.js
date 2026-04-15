@@ -1,8 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWeatherInfo = getWeatherInfo;
-exports.findCityLocation = findCityLocation;
-exports.fetchWeather = fetchWeather;
 // WMO Weather interpretation codes (https://open-meteo.com/en/docs)
 const WEATHER_CODES = {
     0: { condition: 'Clear sky', icon: '☀️', iconNight: '🌙' },
@@ -34,14 +29,14 @@ const WEATHER_CODES = {
     96: { condition: 'Thunderstorm with hail', icon: '⛈️' },
     99: { condition: 'Thunderstorm with heavy hail', icon: '⛈️' },
 };
-function getWeatherInfo(code, isDay = true) {
+export function getWeatherInfo(code, isDay = true) {
     const info = WEATHER_CODES[code] || { condition: 'Unknown', icon: '❓' };
     return {
         condition: info.condition,
         icon: !isDay && info.iconNight ? info.iconNight : info.icon,
     };
 }
-async function findCityLocation(name) {
+export async function findCityLocation(name) {
     const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1`;
     const res = await fetch(url);
     if (!res.ok)
@@ -52,7 +47,7 @@ async function findCityLocation(name) {
         throw new Error('City not found');
     return { latitude: location.latitude, longitude: location.longitude };
 }
-async function fetchWeather(location, days, celsius) {
+export async function fetchWeather(location, days, celsius) {
     const params = {
         latitude: String(location.latitude),
         longitude: String(location.longitude),

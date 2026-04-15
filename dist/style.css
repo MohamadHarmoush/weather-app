@@ -183,6 +183,7 @@ body {
 
 .forecasts-header {
     font-size: 20px;
+    margin-top: 20px;
 }
 
 .forecast-item {
@@ -242,4 +243,57 @@ body {
 
 .forecast-item {
     flex-shrink: 0;
+}
+
+/* ── Favorites section ── */
+.favorites-section {
+    margin: 20px 0;
+}
+
+.favorites-header {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.favorites-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.favorite-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.favorite-name {
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.btn-small {
+    padding: 3px 10px;
+    font-size: 12px;
+    height: 25px;
+    margin-left: 5px;
+}
+
+.btn-danger {
+    background: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.no-favorites {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 15px;
 }

@@ -23,7 +23,7 @@
                 type="text"
                 placeholder="Search for a city..."
             />
-            <button id="search-bt" class="btn">Search</button>
+            <button id="search-btn" class="btn">Search</button>
         </div>
 
         <div class="other-options-wrapper">
@@ -51,72 +51,73 @@
 
         <div id="error-message" class="error-message hidden"></div>
 
-        <div id="loading" class="error-message hidden"></div>
+        <div id="loading" class="loading hidden"></div>
 
-        <div class="city-data-container">
-            <button class="btn">save</button>
+        <div class="city-data-container hidden">
+            <button id="save-btn" class="btn">save</button>
 
             <!-- weather card -->
             <div class="weather-card">
-                <div class="city-name">London, UK</div>
-                <div class="time">Tuesday, April 14, 2026 at 03:45 PM</div>
+                <div id="weather-city-name" class="city-name">London, UK</div>
+                <div id="weather-time" class="time">Tuesday, April 14, 2026 at 03:45 PM</div>
                 <div class="weather-condition">
-                    <div class="weather-condition-value">Overcast</div>
-                    <div class="weather-condition-icon">🌦️</div>
+                    <div id="weather-condition-value" class="weather-condition-value">Overcast</div>
+                    <div id="weather-condition-icon" class="weather-condition-icon">🌦️</div>
                 </div>
 
                 <!-- temperature -->
-                <div class="temp">22.8 °C</div>
+                <div id="weather-temp" class="temp">22.8 °C</div>
 
                 <div class="details">
                     <!-- Humidity -->
                     <div class="detail-item">
                         <div class="detail-label">Humidity</div>
-                        <div class="detail-value">67 %</div>
+                        <div id="weather-humidity" class="detail-value">67 %</div>
                     </div>
 
                     <!-- windSpeed -->
                     <div class="detail-item">
                         <div class="detail-label">wind Speed</div>
-                        <div class="detail-value">25.4 km/h</div>
+                        <div id="weather-wind-speed" class="detail-value">25.4 km/h</div>
                     </div>
                 </div>
             </div>
 
             <!-- forecasts container-->
             <div class="forecasts-header">Forecast</div>
-
             <div class="forecast-scroll-container">
-                <div class="forecast-item">
+                <!-- sample forecast item -->
+                <!-- <div class="forecast-item">
                     <div class="forecast-time">2026-04-15</div>
-                    <div class="forecast-condition">
+                    <div id="forecast-condition" class="forecast-condition">
                         <div class="forecast-condition-icon">🌦️</div>
                         <div class="forecast-condition-value">Overcast</div>
                     </div>
 
-                    <!-- min temp -->
                     <div class="forecast-detail-item">
                         <div class="detail-label">min:</div>
                         <div class="detail-value">12°C</div>
                     </div>
 
-                    <!-- max temp -->
                     <div class="forecast-detail-item">
                         <div class="detail-label">max:</div>
                         <div class="detail-value">12°C</div>
                     </div>
 
-                    <!-- wind speed -->
                     <div class="forecast-detail-item">
                         <div class="detail-label">wind Speed:</div>
                         <div class="detail-value">25.4 km/h</div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
-        <!-- favorite cities container-->
-        <div class="forecasts-header">Favorite cities</div>
 
-        <script src="weather.js"></script>
+        <!-- favorite cities section -->
+        <div id="favorites-section" class="favorites-section hidden">
+            <div class="favorites-header">Favorite cities</div>
+            <div id="favorites-container" class="favorites-container"></div>
+        </div>
+
+        <script type="module" src="app.js"></script>
     </body>
 </html>
