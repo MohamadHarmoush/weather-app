@@ -1,12 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLI Weather App</title>
-</head>
-<body>
-    <h1>CLI Weather App</h1>
-    <script src="weather.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weather App</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+            rel="stylesheet"
+        />
+        <link href="style.css" rel="stylesheet" />
+    </head>
+    <body>
+        <h1 class="header">Weather App</h1>
+
+        <div class="search-card">
+            <input
+                id="search-input"
+                class="search-input"
+                type="text"
+                placeholder="Search for a city..."
+            />
+            <button id="search-bt" class="btn">Search</button>
+        </div>
+
+        <div class="other-options-wrapper">
+            <!-- Temperature Unit selection -->
+            <div class="select-wrapper">
+                <label for="temp-unit">Temperature Unit</label>
+                <select id="temp-unit" class="options-select">
+                    <option value="celsius">Celsius °C</option>
+                    <option value="fahrenheit">Fahrenheit °F</option>
+                </select>
+            </div>
+
+            <!-- Forecast days selection -->
+            <div class="select-wrapper">
+                <label for="forecast-days">Forecast days</label>
+                <select id="forecast-days" class="options-select">
+                    <option value="1">1 day (default)</option>
+                    <option value="3">3 days</option>
+                    <option value="7">7 days</option>
+                    <option value="14">14 days</option>
+                    <option value="16">16 days</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="error-message" class="error-message hidden"></div>
+
+        <div id="loading" class="error-message hidden"></div>
+
+        <div class="city-data-container">
+            <button class="btn">save</button>
+
+            <!-- weather card -->
+            <div class="weather-card">
+                <div class="city-name">London, UK</div>
+                <div class="time">Tuesday, April 14, 2026 at 03:45 PM</div>
+                <div class="weather-condition">
+                    <div class="weather-condition-value">Overcast</div>
+                    <div class="weather-condition-icon">🌦️</div>
+                </div>
+
+                <!-- temperature -->
+                <div class="temp">22.8 °C</div>
+
+                <div class="details">
+                    <!-- Humidity -->
+                    <div class="detail-item">
+                        <div class="detail-label">Humidity</div>
+                        <div class="detail-value">67 %</div>
+                    </div>
+
+                    <!-- windSpeed -->
+                    <div class="detail-item">
+                        <div class="detail-label">wind Speed</div>
+                        <div class="detail-value">25.4 km/h</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- forecasts container-->
+            <div class="forecasts-header">Forecast</div>
+
+            <div class="forecast-scroll-container">
+                <div class="forecast-item">
+                    <div class="forecast-time">2026-04-15</div>
+                    <div class="forecast-condition">
+                        <div class="forecast-condition-icon">🌦️</div>
+                        <div class="forecast-condition-value">Overcast</div>
+                    </div>
+
+                    <!-- min temp -->
+                    <div class="forecast-detail-item">
+                        <div class="detail-label">min:</div>
+                        <div class="detail-value">12°C</div>
+                    </div>
+
+                    <!-- max temp -->
+                    <div class="forecast-detail-item">
+                        <div class="detail-label">max:</div>
+                        <div class="detail-value">12°C</div>
+                    </div>
+
+                    <!-- wind speed -->
+                    <div class="forecast-detail-item">
+                        <div class="detail-label">wind Speed:</div>
+                        <div class="detail-value">25.4 km/h</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- favorite cities container-->
+        <div class="forecasts-header">Favorite cities</div>
+
+        <script src="weather.js"></script>
+    </body>
 </html>
