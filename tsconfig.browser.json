@@ -1,0 +1,21 @@
+{
+    // This config is for compiling TypeScript that runs in the BROWSER.
+    // It extends the base tsconfig but overrides the module system:
+    //   - "module": "es2020"  => output uses import/export (ES modules)
+    //     instead of require() (CommonJS) which only works in Node.
+    //   - "lib": ["es2020", "dom"] => gives us browser types like
+    //     document, window, HTMLElement, localStorage, etc.
+    //   - "types": [] => removes Node types so we don't accidentally
+    //     use 'fs', 'path', 'process', etc. in browser code.
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "es2020",
+        "target": "es2020",
+        "moduleResolution": "bundler",
+        "lib": ["es2020", "dom"],
+        "types": []
+    },
+    // Only compile the browser entry point and the files it imports.
+    // weather.ts (CLI) is excluded -- it uses Node APIs.
+    "include": ["src/app.ts", "src/api.ts", "src/models.ts", "src/localstorge.ts"]
+}
